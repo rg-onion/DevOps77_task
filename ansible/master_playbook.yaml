@@ -1,0 +1,8 @@
+---
+- import_playbook: docker_network_00.yaml #0k
+- import_playbook: prometheus_01.yaml #0k
+- import_playbook: node_02.yaml #0k
+- import_playbook: nginx_web_03.yaml #0k
+- import_playbook: nginx_reverse_04.yaml #0k
+- import_playbook: python_daemon_05.yaml #no
+- import_playbook: zookeeper_network_06.yaml #no

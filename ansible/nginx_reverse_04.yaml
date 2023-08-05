@@ -1,0 +1,21 @@
+- hosts: localhost
+  tasks:
+  - name: Build NGINX Reverse Proxy Server Docker image
+    docker_image:
+      build:
+        path: /home/aid/DevOps_77task/docker/nginx_reverse_servis/
+        pull: yes
+      name: debian_nginx_proxy
+      source: build
+
+  - name: Ensure NGINX Reverse Proxy Server container is running
+    docker_container:
+      name: nginx_proxy
+      image: debian_nginx_proxy
+      state: started
+      published_ports: ['8080:8080']
+      volumes:
+        - /home/aid/DevOps_77task/docker/nginx_web_servis/default.conf:/etc/nginx/default.conf
+        - /home/aid/DevOps_77task/docker/nginx_reverse_servis/reverse_proxy.conf:/etc/nginx/nginx.conf
+      networks:
+        - name: prometheus_network

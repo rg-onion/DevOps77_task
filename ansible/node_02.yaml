@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  tasks:
+  - name: Build Node Exporter Docker image
+    docker_image:
+      build:
+        path: /home/aid/DevOps_77task/docker/Node_servis/
+        pull: yes
+      name: debian_node_exporter
+      source: build
+
+  - name: Ensure Node Exporter container is running
+    docker_container:
+      name: node_exporter
+      image: debian_node_exporter
+      state: started
+      published_ports: ['9100:9100']
+      volumes:
+        - /proc:/host/proc:ro
+        - /sys:/host/sys:ro
+      networks:
+        - name: prometheus_network

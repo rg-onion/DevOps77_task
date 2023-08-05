@@ -1,0 +1,21 @@
+- hosts: localhost
+  tasks:
+  - name: Build NGINX Web Server Docker image
+    docker_image:
+      build:
+        path: /home/aid/DevOps_77task/nginx_web_servis/
+        pull: yes
+      name: debian_nginx_web
+      source: build
+
+  - name: Ensure NGINX Web Server container is running
+    docker_container:
+      name: nginx_web
+      image: debian_nginx_web
+      state: started
+      published_ports: ['80:80']
+      volumes:
+        - /home/aid/DevOps_77task/docker/nginx_web_servis/default.conf:/etc/nginx/default.conf
+        - /home/aid/DevOps_77task/docker/nginx_web_servis/index.html:/usr/share/nginx/html/index.html
+      networks:
+        - name: prometheus_network

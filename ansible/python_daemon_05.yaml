@@ -1,0 +1,20 @@
+- hosts: localhost
+  tasks:
+  - name: Build Python Daemon Service Docker image
+    docker_image:
+      build:
+        path: /home/aid/DevOps_77task/docker/daemon_servis/
+        pull: yes
+      name: debian_python_daemon
+      source: build
+
+  - name: Ensure Python Daemon Service container is running
+    docker_container:
+      name: python_daemon
+      image: debian_python_daemon
+      state: started
+      volumes:
+        - /home/aid/DevOps_77task/docker/daemon_servis/daemon_script.py:/app/daemon_script.py
+        - /home/aid/DevOps_77task/docker/daemon_servis/myservice/run:/app/run
+      networks:
+        - name: prometheus_network

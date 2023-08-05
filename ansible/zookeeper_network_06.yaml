@@ -1,0 +1,59 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure network exists
+      docker_network:
+        name: zookeeper_network
+
+    - name: Build Zookeeper Docker image for server 1
+      docker_image:
+        name: zookeeper_debian
+        build:
+          path: /home/aid/DevOps_77task/docker/distributed_zookeeper_servis
+          args:
+            ZOO_MY_ID: "1"
+        source: build
+
+    - name: Ensure zookeeper1 container is running
+      docker_container:
+        name: zookeeper1
+        hostname: zookeeper1
+        image: zookeeper_debian
+        exposed_ports:
+          - 2181
+        published_ports:
+          - 2181:2181
+        env:
+          ZOO_MY_ID: "1"
+          ZOO_SERVERS: "server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888"
+        volumes:
+          - "/home/aid/DevOps_77task/docker/distributed_zookeeper_servis/data1:/app/zookeeper/data"
+        networks:
+          - name: zookeeper_network
+
+    - name: Build Zookeeper Docker image for server 2
+      docker_image:
+        name: zookeeper_debian
+        build:
+          path: /home/aid/DevOps_77task/docker/distributed_zookeeper_servis
+          args:
+            ZOO_MY_ID: "2"
+        source: build
+
+    - name: Ensure zookeeper2 container is running
+      docker_container:
+        name: zookeeper2
+        hostname: zookeeper2
+        image: zookeeper_debian
+        exposed_ports:
+          - 2181
+        published_ports:
+          - 2182:2181
+        env:
+          ZOO_MY_ID: "2"
+          ZOO_SERVERS: "server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888"
+        volumes:
+          - "/home/aid/DevOps_77task/docker/distributed_zookeeper_servis/data2:/app/zookeeper/data"
+        networks:
+          - name: zookeeper_network

@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  tasks:
+  - name: Build Prometheus Docker image
+    docker_image:
+      build:
+        path: /home/aid/DevOps_77task/docker/Prometheus_servis/
+        pull: yes
+      name: debian_prometheus
+      source: build
+
+  - name: Ensure Prometheus container is running
+    docker_container:
+      name: prometheus
+      image: debian_prometheus
+      state: started
+      published_ports: ['9090:9090']
+      volumes:
+        - /home/aid/DevOps_77task/docker/Prometheus_servis/prometheus.yml:/etc/prometheus/prometheus.yml
+      networks:
+        - name: prometheus_network
